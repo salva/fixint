@@ -130,13 +130,13 @@ op(left)(uintN_t *a, unsigned int b, uintN_t *c) {
 	    i = b / WORDBITS;
 	    j = NW - i;
 	    b = b % WORDBITS;
-	    while (j--) (cw + w)[j] = aw[j];
+	    while (j--) (cw + i)[j] = aw[j];
 	    j = i;
 	    while (j--) cw[j] = 0;
 	}
 	else i = 0;
 	for (; i < NW; i++) {
-	    carry ||= (((dword)aw[i]) << b);
+	    carry |= (((dword)aw[i]) << b);
 	    cw[i] = carry;
 	    carry >>= WORDBITS;
 	}
@@ -144,6 +144,12 @@ op(left)(uintN_t *a, unsigned int b, uintN_t *c) {
 }
 
 void
-op(leftw)(uintN_t *a, unsigned int b, uint_t *c) {
-    
+op(leftw)(uintN_t *a, unsigned int b, uintN_t *c) {
+    if (b >= NW)
+	op(zero)(c);
+    else {
+	int i = NW - b;
+	while (i--) (cw + b)[i] = aw[i];
+	while (b--) cw[b] = 0;
+    }    
 }
